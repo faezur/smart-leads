@@ -15,10 +15,7 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors({
-  origin: [
-    "https://smart-leads-git.vercel.app"
-  ],
-  credentials: true,
+  origin: "*",
 }));
 app.use(morgan('dev'));
 app.use(express.json());
