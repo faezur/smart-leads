@@ -16,7 +16,7 @@ interface DashboardPageProps {
 
 const DashboardPage = ({ onToggleDark, isDark }: DashboardPageProps) => {
   const { fetchLeads, leads, pagination } = useLeadStore();
-  const { user } = useAuthStore();
+  const {} = useAuthStore();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedLead, setSelectedLead] = useState<ILead | null>(null);
