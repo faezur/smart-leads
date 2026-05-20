@@ -2,10 +2,9 @@
 
 A full-stack Lead Management Dashboard built with the MERN stack, TypeScript, and modern best practices.
 
-## 🚀 Live Demo
+## 🚀 Live Demo Link
 
-- **Frontend:** [Coming Soon]
-- **Backend API:** [Coming Soon]
+- [https://smart-leads-gilt.vercel.app]
 
 ## ✨ Features
 
