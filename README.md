@@ -37,31 +37,6 @@ A full-stack Lead Management Dashboard built with the MERN stack, TypeScript, an
 - Zod Validation
 - json2csv
 
-## 📁 Project Structure
-smart-leads/
-├── backend/
-│   ├── src/
-│   │   ├── config/        # Database connection
-│   │   ├── controllers/   # Route controllers
-│   │   ├── middleware/    # Auth, error, validation
-│   │   ├── models/        # Mongoose models
-│   │   ├── routes/        # API routes
-│   │   ├── types/         # TypeScript interfaces
-│   │   └── utils/         # Helper functions
-│   ├── Dockerfile
-│   └── .env.example
-├── frontend/
-│   ├── src/
-│   │   ├── api/           # Axios API calls
-│   │   ├── components/    # Reusable components
-│   │   ├── pages/         # Page components
-│   │   ├── store/         # Zustand stores
-│   │   ├── types/         # TypeScript types
-│   │   └── utils/         # Helper functions
-│   ├── Dockerfile
-│   └── nginx.conf
-├── docker-compose.yml
-└── README.md
 
 ## ⚙️ Local Setup (Without Docker)
 
