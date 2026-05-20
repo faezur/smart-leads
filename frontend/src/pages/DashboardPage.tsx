@@ -21,7 +21,6 @@ const DashboardPage = ({ onToggleDark, isDark }: DashboardPageProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedLead, setSelectedLead] = useState<ILead | null>(null);
 
-  // Fetch leads on mount
   useEffect(() => {
     fetchLeads();
   }, [fetchLeads]);
@@ -42,12 +41,14 @@ const DashboardPage = ({ onToggleDark, isDark }: DashboardPageProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+    <div className="min-h-screen w-full bg-gray-50 dark:bg-gray-900 transition-colors">
       <Navbar onToggleDark={onToggleDark} isDark={isDark} />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Page header */}
-        <div className="flex items-center justify-between mb-6">
+      {/* 🔥 FIXED CONTAINER */}
+      <main className="w-full px-4 sm:px-6 lg:px-8 py-8">
+        
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               Leads Dashboard
@@ -59,29 +60,26 @@ const DashboardPage = ({ onToggleDark, isDark }: DashboardPageProps) => {
           <Button onClick={handleCreate}>+ Add Lead</Button>
         </div>
 
-        {/* Stats row */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+        {/* Stats */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           {[
-            { label: 'Total', value: pagination?.total ?? 0, color: 'blue' },
+            { label: 'Total', value: pagination?.total ?? 0 },
             {
               label: 'New',
               value: leads.filter((l) => l.status === 'New').length,
-              color: 'blue',
             },
             {
               label: 'Qualified',
               value: leads.filter((l) => l.status === 'Qualified').length,
-              color: 'green',
             },
             {
               label: 'Lost',
               value: leads.filter((l) => l.status === 'Lost').length,
-              color: 'red',
             },
           ].map((stat) => (
             <div
               key={stat.label}
-              className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4"
+              className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 w-full"
             >
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 {stat.label}
@@ -94,15 +92,17 @@ const DashboardPage = ({ onToggleDark, isDark }: DashboardPageProps) => {
         </div>
 
         {/* Filters */}
-        <div className="mb-4">
+        <div className="mb-4 w-full">
           <LeadFilters />
         </div>
 
         {/* Table */}
-        <LeadTable onEdit={handleEdit} />
+        <div className="w-full overflow-x-auto">
+          <LeadTable onEdit={handleEdit} />
+        </div>
       </main>
 
-      {/* Create / Edit Modal */}
+      {/* Modal */}
       <Modal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
