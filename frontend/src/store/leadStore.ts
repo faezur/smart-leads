@@ -18,7 +18,7 @@ interface LeadState {
   error: string | null;
 
   // Actions
-  fetchLeads: (newFilters?: LeadFilters) => Promise<void>;
+  fetchLeads: (filters?: LeadFilters) => Promise<void>;
   createLead: (data: LeadFormData) => Promise<void>;
   updateLead: (id: string, data: Partial<LeadFormData>) => Promise<void>;
   deleteLead: (id: string) => Promise<void>;
@@ -26,7 +26,6 @@ interface LeadState {
   setFilters: (filters: Partial<LeadFilters>) => void;
   setSelectedLead: (lead: ILead | null) => void;
   clearError: () => void;
-  setPage: (page: number) => void;
 }
 
 const useLeadStore = create<LeadState>()((set, get) => ({
@@ -46,21 +45,20 @@ const useLeadStore = create<LeadState>()((set, get) => ({
   error: null,
 
   // Fetch leads with current filters
-  fetchLeads: async (newFilters) => {
+  fetchLeads: async (filters) => {
     set({ isLoading: true, error: null });
     try {
-      const updatedFilters = { ...get().filters, ...newFilters };
+      const currentFilters = filters || get().filters;
 
+      // Remove empty filters before sending to API
       const cleanFilters = Object.fromEntries(
-        Object.entries(updatedFilters).filter(([_, v]) => v !== '')
+        Object.entries(currentFilters).filter(([_, v]) => v !== '')
       );
 
       const response = await getLeadsApi(cleanFilters);
-
       set({
         leads: response.data,
         pagination: response.pagination,
-        filters: updatedFilters,
         isLoading: false,
       });
     } catch (error: unknown) {
@@ -68,12 +66,6 @@ const useLeadStore = create<LeadState>()((set, get) => ({
         (error as any)?.response?.data?.message || 'Failed to fetch leads';
       set({ error: message, isLoading: false });
     }
-  },
-
-   setPage: (page: number) => {
-    const filters = { ...get().filters, page };
-    set({ filters });
-    get().fetchLeads(filters);
   },
 
   // Create new lead

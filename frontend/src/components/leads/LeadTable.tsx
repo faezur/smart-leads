@@ -11,23 +11,23 @@ interface LeadTableProps {
 }
 
 const LeadTable = ({ onEdit }: LeadTableProps) => {
-  const {
-    leads,
-    isLoading,
-    deleteLead,
-    pagination,
-    setPage // ✅ IMPORTANT
-  } = useLeadStore();
-
+  const { leads, isLoading, deleteLead, pagination, filters, setFilters } =
+    useLeadStore();
   const { user } = useAuthStore();
 
   if (isLoading) return <Spinner />;
 
+  // Empty state
   if (!isLoading && leads.length === 0) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-xl border p-12 text-center">
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-12 text-center">
         <p className="text-4xl mb-3">📋</p>
-        <p className="text-lg font-medium">No leads found</p>
+        <p className="text-lg font-medium text-gray-700 dark:text-gray-300">
+          No leads found
+        </p>
+        <p className="text-sm text-gray-400 mt-1">
+          Try changing filters or create a new lead
+        </p>
       </div>
     );
   }
@@ -37,52 +37,88 @@ const LeadTable = ({ onEdit }: LeadTableProps) => {
     await deleteLead(id);
   };
 
+  const handlePageChange = (newPage: number) => {
+    setFilters({ page: newPage });
+  };
+
   return (
     <div className="flex flex-col gap-4">
-
-      {/* TABLE */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl border overflow-hidden">
+      {/* Table */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 dark:bg-gray-700">
+            {/* Header */}
+            <thead className="bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
               <tr>
-                <th className="px-6 py-3 text-left">Name</th>
-                <th className="px-6 py-3 text-left">Email</th>
-                <th className="px-6 py-3 text-left">Status</th>
-                <th className="px-6 py-3 text-left">Source</th>
-                <th className="px-6 py-3 text-left">Created</th>
-                <th className="px-6 py-3 text-left">Actions</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Name
+                </th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Email
+                </th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Source
+                </th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Created
+                </th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Actions
+                </th>
               </tr>
             </thead>
 
-            <tbody>
+            {/* Body */}
+            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
               {leads.map((lead) => (
-                <tr key={lead._id}>
-                  <td className="px-6 py-4">{lead.name}</td>
-                  <td className="px-6 py-4">{lead.email}</td>
-
-                  <td className="px-6 py-4">
-                    <Badge label={lead.status} className={getStatusColor(lead.status)} />
+                <tr
+                  key={lead._id}
+                  className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                >
+                  <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
+                    {lead.name}
                   </td>
-
-                  <td className="px-6 py-4">
-                    <Badge label={lead.source} className={getSourceColor(lead.source)} />
+                  <td className="px-6 py-4 text-gray-500 dark:text-gray-400">
+                    {lead.email}
                   </td>
-
                   <td className="px-6 py-4">
+                    <Badge
+                      label={lead.status}
+                      className={getStatusColor(lead.status)}
+                    />
+                  </td>
+                  <td className="px-6 py-4">
+                    <Badge
+                      label={lead.source}
+                      className={getSourceColor(lead.source)}
+                    />
+                  </td>
+                  <td className="px-6 py-4 text-gray-500 dark:text-gray-400">
                     {formatDate(lead.createdAt)}
                   </td>
-
-                  <td className="px-6 py-4 flex gap-2">
-                    <Button size="sm" onClick={() => onEdit(lead)}>
-                      Edit
-                    </Button>
-
-                    {user?.role === 'admin' && (
-                      <Button size="sm" variant="danger" onClick={() => handleDelete(lead._id)}>
-                        Delete
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onEdit(lead)}
+                      >
+                        Edit
                       </Button>
-                    )}
+                      {/* Only admin can delete */}
+                      {user?.role === 'admin' && (
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          onClick={() => handleDelete(lead._id)}
+                        >
+                          Delete
+                        </Button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -91,38 +127,32 @@ const LeadTable = ({ onEdit }: LeadTableProps) => {
         </div>
       </div>
 
-      {/* PAGINATION */}
+      {/* Pagination */}
       {pagination && pagination.totalPages > 1 && (
-        <div className="flex justify-between items-center">
-
-          <p className="text-sm">
+        <div className="flex items-center justify-between px-1">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             Showing {leads.length} of {pagination.total} leads
           </p>
-
           <div className="flex items-center gap-2">
-
             <Button
-              size="sm"
               variant="secondary"
+              size="sm"
               disabled={!pagination.hasPrevPage}
-              onClick={() => setPage(pagination.page - 1)} // ✅ FIX
+              onClick={() => handlePageChange(filters.page! - 1)}
             >
               Previous
             </Button>
-
-            <span className="text-sm">
+            <span className="text-sm text-gray-600 dark:text-gray-300 px-2">
               Page {pagination.page} of {pagination.totalPages}
             </span>
-
             <Button
-              size="sm"
               variant="secondary"
+              size="sm"
               disabled={!pagination.hasNextPage}
-              onClick={() => setPage(pagination.page + 1)} // ✅ FIX
+              onClick={() => handlePageChange(filters.page! + 1)}
             >
               Next
             </Button>
-
           </div>
         </div>
       )}
