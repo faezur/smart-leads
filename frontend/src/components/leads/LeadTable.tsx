@@ -37,9 +37,9 @@ const LeadTable = ({ onEdit }: LeadTableProps) => {
     await deleteLead(id);
   };
 
-  const handlePageChange = (newPage: number) => {
-    setFilters({ page: newPage });
-  };
+ const handlePageChange = (newPage: number) => {
+  setFilters({ ...filters, page: newPage });
+};
 
   return (
     <div className="flex flex-col gap-4">

@@ -129,10 +129,10 @@ const useLeadStore = create<LeadState>()((set, get) => ({
 
   // Update filters and refetch
   setFilters: (newFilters) => {
-    const updatedFilters = { ...get().filters, ...newFilters, page: 1 };
-    set({ filters: updatedFilters });
-    get().fetchLeads(updatedFilters);
-  },
+  const updatedFilters = { ...get().filters, ...newFilters };
+  set({ filters: updatedFilters });
+  get().fetchLeads(updatedFilters);
+},
 
   // Set selected lead for edit/view
   setSelectedLead: (lead) => set({ selectedLead: lead }),
