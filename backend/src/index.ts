@@ -14,8 +14,10 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
+app.use(helmet());
 app.use(cors({
-  origin: "*",
+  origin: process.env.FRONTEND_URL,
+  credentials: true,
 }));
 app.use(morgan('dev'));
 app.use(express.json());
