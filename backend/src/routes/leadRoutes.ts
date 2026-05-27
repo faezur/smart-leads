@@ -1,36 +1,30 @@
 import { Router } from 'express';
+import { z } from 'zod';
 import {
   getLeads,
   getLeadById,
   createLead,
-  updateLead,
+  updateLeadStatus,
   deleteLead,
-  exportLeadsCSV,
 } from '../controllers/leadController';
-import { authenticate, authorize } from '../middleware/authMiddleware';
 import validate from '../middleware/validate';
-import { z } from 'zod';
 
 const router = Router();
 
-// Validation schema for create and update
-const leadSchema = z.object({
+const createLeadSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
-  email: z.string().email('Invalid email format'),
-  status: z.enum(['New', 'Contacted', 'Qualified', 'Lost']).optional(),
-  source: z.enum(['Website', 'Instagram', 'Referral']),
+  phone: z.string().min(7, 'Phone must be at least 7 characters'),
+  source: z.string().min(2, 'Source is required'),
 });
 
-const updateLeadSchema = leadSchema.partial(); // all fields optional for update
-
-// All routes require authentication
-router.use(authenticate);
+const updateStatusSchema = z.object({
+  status: z.enum(['Interested', 'Not Interested', 'Converted']),
+});
 
 router.get('/', getLeads);
-router.get('/export/csv', exportLeadsCSV);
 router.get('/:id', getLeadById);
-router.post('/', validate(leadSchema), createLead);
-router.put('/:id', validate(updateLeadSchema), updateLead);
-router.delete('/:id', authorize('admin'), deleteLead);
+router.post('/', validate(createLeadSchema), createLead);
+router.put('/:id', validate(updateStatusSchema), updateLeadStatus);
+router.delete('/:id', deleteLead);
 
 export default router;

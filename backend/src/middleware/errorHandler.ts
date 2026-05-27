@@ -13,12 +13,6 @@ const errorHandler = (
     return;
   }
 
-  // MongoDB duplicate key error
-  if ((err as any).code === 11000) {
-    sendError(res, 'Email already exists', 400);
-    return;
-  }
-
   console.error('Unexpected error:', err);
   sendError(res, 'Internal server error', 500);
 };

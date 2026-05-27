@@ -1,28 +1,15 @@
 import express from 'express';
 import cors from 'cors';
-import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
-import connectDB from './config/db';
-import authRoutes from './routes/authRoutes';
 import errorHandler from './middleware/errorHandler';
 import leadRoutes from './routes/leadRoutes';
 
 dotenv.config();
 
-const requiredEnvVars = ['JWT_SECRET', 'MONGODB_URI'];
-requiredEnvVars.forEach((envVar) => {
-  if (!process.env[envVar]) {
-    console.error(`Missing required environment variable: ${envVar}`);
-    process.exit(1);
-  }
-});
-
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(helmet());
 app.use(cors({
   origin: [
     process.env.FRONTEND_URL || '',
@@ -39,15 +26,12 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', message: 'Smart Leads API is running' });
 });
 
-// Routes
-app.use('/api/auth', authRoutes);
 app.use('/api/leads', leadRoutes);
 
 app.use(errorHandler);
 
 // Start server
-const startServer = async (): Promise<void> => {
-  await connectDB();
+const startServer = (): void => {
   app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
   });
