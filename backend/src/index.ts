@@ -10,14 +10,6 @@ import leadRoutes from './routes/leadRoutes';
 
 dotenv.config();
 
-const requiredEnvVars = ['JWT_SECRET', 'MONGODB_URI'];
-requiredEnvVars.forEach((envVar) => {
-  if (!process.env[envVar]) {
-    console.error(`Missing required environment variable: ${envVar}`);
-    process.exit(1);
-  }
-});
-
 const app = express();
 const PORT = process.env.PORT || 5000;
 
