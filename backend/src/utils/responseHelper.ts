@@ -1,5 +1,11 @@
 import { Response } from 'express';
-import { ApiResponse, PaginatedResponse } from '../types';
+
+interface ApiResponse<T = unknown> {
+  success: boolean;
+  message: string;
+  data?: T;
+  errors?: string[];
+}
 
 // Success response
 export const sendSuccess = <T>(
@@ -31,28 +37,3 @@ export const sendError = (
   return res.status(statusCode).json(response);
 };
 
-// Paginated response
-export const sendPaginated = <T>(
-  res: Response,
-  message: string,
-  data: T[],
-  total: number,
-  page: number,
-  limit: number
-): Response => {
-  const totalPages = Math.ceil(total / limit);
-  const response: PaginatedResponse<T> = {
-    success: true,
-    message,
-    data,
-    pagination: {
-      total,
-      page,
-      limit,
-      totalPages,
-      hasNextPage: page < totalPages,
-      hasPrevPage: page > 1,
-    },
-  };
-  return res.status(200).json(response);
-};
