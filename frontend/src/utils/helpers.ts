@@ -10,9 +10,10 @@ export const formatDate = (dateString: string): string => {
 // Get status badge color
 export const getStatusColor = (status: string): string => {
   const colors: Record<string, string> = {
-    Interested: 'bg-blue-100 text-blue-700',
-    'Not Interested': 'bg-red-100 text-red-700',
-    Converted: 'bg-green-100 text-green-700',
+    New: 'bg-blue-100 text-blue-700',
+    Contacted: 'bg-yellow-100 text-yellow-700',
+    Qualified: 'bg-green-100 text-green-700',
+    Lost: 'bg-red-100 text-red-700',
   };
   return colors[status] || 'bg-gray-100 text-gray-700';
 };
@@ -20,9 +21,9 @@ export const getStatusColor = (status: string): string => {
 // Get source badge color
 export const getSourceColor = (source: string): string => {
   const colors: Record<string, string> = {
-    Call: 'bg-purple-100 text-purple-700',
-    WhatsApp: 'bg-green-100 text-green-700',
-    Field: 'bg-orange-100 text-orange-700',
+    Website: 'bg-purple-100 text-purple-700',
+    Instagram: 'bg-pink-100 text-pink-700',
+    Referral: 'bg-orange-100 text-orange-700',
   };
   return colors[source] || 'bg-gray-100 text-gray-700';
 };
@@ -30,4 +31,21 @@ export const getSourceColor = (source: string): string => {
 // Truncate long text
 export const truncate = (text: string, length: number): string => {
   return text.length > length ? text.slice(0, length) + '...' : text;
+};
+
+export const getApiErrorMessage = (
+  error: unknown,
+  fallback: string
+): string => {
+  if (typeof error === 'object' && error !== null && 'response' in error) {
+    const response = (
+      error as { response?: { data?: { message?: unknown } } }
+    ).response;
+
+    if (typeof response?.data?.message === 'string') {
+      return response.data.message;
+    }
+  }
+
+  return fallback;
 };

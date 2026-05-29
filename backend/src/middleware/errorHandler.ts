@@ -2,6 +2,10 @@ import { Request, Response, NextFunction } from 'express';
 import AppError from '../utils/AppError';
 import { sendError } from '../utils/responseHelper';
 
+interface MongoDuplicateKeyError extends Error {
+  code?: number;
+}
+
 const errorHandler = (
   err: Error | AppError,
   _req: Request,
@@ -10,6 +14,12 @@ const errorHandler = (
 ): void => {
   if (err instanceof AppError) {
     sendError(res, err.message, err.statusCode);
+    return;
+  }
+
+  // MongoDB duplicate key error
+  if ((err as MongoDuplicateKeyError).code === 11000) {
+    sendError(res, 'Email already exists', 400);
     return;
   }
 
